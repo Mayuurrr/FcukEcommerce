@@ -8,7 +8,9 @@ const Navbar = () => {
 
   return (
     <div className='flex items-center justify-between py-5 font-medium'>
-      <img src={assets.logo} className='w-36' alt="Logo" />
+      <Link to='/'>
+        <img src={assets.logo} className='w-36' alt="Logo" />
+      </Link>
       <ul className='hidden sm:flex gap-5 text-sm text-black '>
         <NavLink to='/' className='flex flex-col items-center gap-1'>
           <p>HOME</p>
@@ -47,14 +49,14 @@ const Navbar = () => {
       </div>
       <div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full' : 'w-0'}`}>
         <div className='flex flex-col text-gray-800'>
-          <div onClick={()=>setVisble(false)}className='flex items-center gap-4 p-3 cursor-pointer'>
+          <div onClick={() => setVisble(false)} className='flex items-center gap-4 p-3 cursor-pointer'>
             <img src={assets.dropdown_icon} className='h-4 rotate-180' alt="" />
             <p>Back</p>
           </div>
-          <NavLink onClick={()=>setVisble(false)} className='py-2 pl-6 border' to='/'>Home</NavLink>
-          <NavLink onClick={()=>setVisble(false)} className='py-2 pl-6 border' to='/collection'>Collection</NavLink>
-          <NavLink onClick={()=>setVisble(false)} className='py-2 pl-6 border' to='/about'>About</NavLink>
-          <NavLink onClick={()=>setVisble(false)} className='py-2 pl-6 border' to='/contact'>Contact</NavLink>
+          <NavLink onClick={() => setVisble(false)} className='py-2 pl-6 border' to='/'>Home</NavLink>
+          <NavLink onClick={() => setVisble(false)} className='py-2 pl-6 border' to='/collection'>Collection</NavLink>
+          <NavLink onClick={() => setVisble(false)} className='py-2 pl-6 border' to='/about'>About</NavLink>
+          <NavLink onClick={() => setVisble(false)} className='py-2 pl-6 border' to='/contact'>Contact</NavLink>
         </div>
       </div>
     </div>
