@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
+import RelatedProducts from '../components/RelatedProducts';
 
 const Product = () => {
   const { productId } = useParams();
@@ -76,8 +77,12 @@ const Product = () => {
           <b className='border px-5 py-3 text-sm'>Description</b>
           <p className='border px-5 py-3 text-sm'>Reviews (122)</p>
         </div>
-        <div className='flex flex-col gap-4 '></div>
+        <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
+          <p>An e-commerce website is an online platform that facilitates the buying and selling,provide a seamless shopping experience, combining convenience with a diverse range of items from fashion and electronics to home essentials. With user-friendly navigation and secure payment options, we ensure that your online shopping is as enjoyable as it is efficient</p>
+          <p>At the heart of our store is a commitment to customer satisfaction. We pride ourselves on offering exceptional service, prompt delivery, and a hassle-free return policy. Explore our latest collections and exclusive deals, and join our community of satisfied shoppers</p>
+        </div>
       </div>
+      <RelatedProducts category={productData.category} subCategory={productData.subCategory}/>
     </div>
   ) : (
     <div className="opacity-0"></div>
