@@ -7,9 +7,12 @@ const BestSeller = () => {
   const { products } = useContext(ShopContext);
   const [bestSeller, setBestSeller] = useState([]);
 
+
   useEffect(() => {
     if (Array.isArray(products)) {
-      const bestProduct = products.filter((item) => item.bestseller);
+      const bestProduct = products.filter((item) => item.bestSeller === true);
+      console.log(products);
+      
       setBestSeller(bestProduct.slice(0, 5));
     }
   }, [products]);

@@ -17,7 +17,7 @@ const Add = ({ token }) => {
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
-  // Submit handler
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -28,10 +28,11 @@ const Add = ({ token }) => {
       formData.append("price", price);
       formData.append("category", category);
       formData.append("subCategory", subCategory);
-      formData.append("bestseller", bestseller);
+      formData.append("bestseller", bestseller ? 'true' : 'false');
+      console.log(bestseller);
+      
       formData.append("sizes", JSON.stringify(sizes));
 
-      // Append images
       images.forEach((image, index) => {
         if (image) formData.append(`image${index + 1}`, image);
       });
@@ -40,10 +41,8 @@ const Add = ({ token }) => {
         headers: { token },
       });
 
-      // Handle response
       if (response.data.success) {
-        toast.success(response.data.message); // Show success toast
-        // Reset form
+        toast.success(response.data.message);
         setName('');
         setDescription('');
         setPrice('');
@@ -53,15 +52,14 @@ const Add = ({ token }) => {
         setSizes([]);
         setImages([null, null, null, null]);
       } else {
-        toast.error(response.data.message); // Show error toast
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message); // Show error toast
+      toast.error(error.message);
     }
   };
 
-  // Update image array
   const handleImageChange = (index, file) => {
     setImages((prevImages) => {
       const newImages = [...prevImages];
@@ -70,7 +68,6 @@ const Add = ({ token }) => {
     });
   };
 
-  // Toggle size selection
   const toggleSize = (size) => {
     setSizes((prev) =>
       prev.includes(size) ? prev.filter((item) => item !== size) : [...prev, size]
@@ -183,7 +180,7 @@ const Add = ({ token }) => {
             type="checkbox"
             id="bestseller"
             checked={bestseller}
-            onChange={(e) => setBestseller(e.target.checked)}
+            onChange={(e) => setBestseller(e.target.checked)} 
           />
           <label className="cursor-pointer" htmlFor="bestseller">
             Add to bestseller
