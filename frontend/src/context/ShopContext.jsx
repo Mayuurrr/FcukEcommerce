@@ -8,13 +8,13 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
     const currency = '₹';
     const deliveryFee = 499;
-    const backendURL = import.meta.env.VITE_BACKEND_URL
-    console.log(backendURL);
+    const backendURL = import.meta.env.VITE_BACKEND_URL;
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
     const [cartItems, setCartItems] = useState({});
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [token , setToken] = useState('');
 
     const addToCart = async (itemId, size) => {
         if (!size) {
@@ -85,6 +85,12 @@ const ShopContextProvider = (props) => {
         getProductData()
     }, [])
 
+    useEffect(()=>{
+        if (!token && localStorage.getItem('token')) {
+            setToken(localStorage.getItem('token'));
+        }
+    })
+
 
     const value = {
         products,
@@ -100,7 +106,9 @@ const ShopContextProvider = (props) => {
         updateQuantity,
         getCartAmount,
         navigate,
-        backendURL
+        backendURL,
+        setToken,
+        token
     };
 
     return (
