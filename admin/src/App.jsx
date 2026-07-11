@@ -9,7 +9,10 @@ import Login from './components/Login';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const backendURL = import.meta.env.VITE_BACKEND_URL
+const rawBackendURL = import.meta.env.VITE_BACKEND_URL || "";
+export const backendURL = rawBackendURL && !/^https?:\/\//i.test(rawBackendURL)
+  ? (rawBackendURL.includes("localhost") || rawBackendURL.includes("127.0.0.1") ? `http://${rawBackendURL}` : `https://${rawBackendURL}`)
+  : rawBackendURL;
 export const currency = "₹"
 
 const App = () => {
