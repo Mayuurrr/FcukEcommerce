@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { assets } from '../assets/assets';
 import axios from 'axios';
 import { backendURL } from '../App';
-import { toast, ToastContainer } from 'react-toastify'; // Import Toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Add = ({ token }) => {
   // State management
@@ -17,21 +17,18 @@ const Add = ({ token }) => {
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
-
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("price", price);
-      formData.append("category", category);
-      formData.append("subCategory", subCategory);
-      formData.append("bestseller", bestseller ? 'true' : 'false');
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('category', category);
+      formData.append('subCategory', subCategory);
+      formData.append('bestseller', bestseller ? 'true' : 'false');
       console.log(bestseller);
-      
-      formData.append("sizes", JSON.stringify(sizes));
+      formData.append('sizes', JSON.stringify(sizes));
 
       images.forEach((image, index) => {
         if (image) formData.append(`image${index + 1}`, image);
@@ -74,21 +71,42 @@ const Add = ({ token }) => {
     );
   };
 
+  const inputClass =
+    'border border-zinc-200 px-3 py-2.5 text-sm w-full focus:outline-none focus:border-zinc-900 transition-colors duration-150';
+  const labelClass = 'text-xs uppercase tracking-widest text-zinc-400 mb-1.5 block';
+
   return (
-    <div className="add-product-container">
-      <form onSubmit={onSubmitHandler} className="flex flex-col w-full items-start gap-2">
+    <div className='p-8 max-w-2xl fade-up'>
+      {/* Page Title */}
+      <h1 className='text-xl font-light text-zinc-900 mb-8'>Add Product</h1>
+
+      <form onSubmit={onSubmitHandler} className='flex flex-col gap-6'>
+
+        {/* Image Upload */}
         <div>
-          <p className="mb-2">Upload Image</p>
-          <div className="flex gap-2">
+          <p className={labelClass}>Product Images</p>
+          <div className='flex gap-3'>
             {images.map((img, index) => (
-              <label key={index} htmlFor={`image${index + 1}`}>
-                <img
-                  className="w-20"
-                  src={!img ? assets.upload_area : URL.createObjectURL(img)}
-                  alt="upload preview"
-                />
+              <label
+                key={index}
+                htmlFor={`image${index + 1}`}
+                className='w-24 h-24 border border-dashed border-zinc-200 flex items-center justify-center cursor-pointer hover:border-zinc-400 transition-colors duration-150 overflow-hidden'
+              >
+                {img ? (
+                  <img
+                    className='w-full h-full object-cover'
+                    src={URL.createObjectURL(img)}
+                    alt='upload preview'
+                  />
+                ) : (
+                  <img
+                    className='w-8 h-8 opacity-30'
+                    src={assets.upload_area}
+                    alt='upload'
+                  />
+                )}
                 <input
-                  type="file"
+                  type='file'
                   id={`image${index + 1}`}
                   hidden
                   onChange={(e) => handleImageChange(index, e.target.files[0])}
@@ -98,102 +116,119 @@ const Add = ({ token }) => {
           </div>
         </div>
 
-        <div className="w-full">
-          <p className="mb-2">Product name</p>
+        {/* Product Name */}
+        <div>
+          <label className={labelClass}>Product Name</label>
           <input
-            className="w-full max-w-[500px] px-3 py-2"
-            type="text"
-            placeholder="Type here"
+            className={inputClass}
+            type='text'
+            placeholder='e.g. Classic White Shirt'
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
 
-        <div className="w-full">
-          <p className="mb-2">Product description</p>
+        {/* Product Description */}
+        <div>
+          <label className={labelClass}>Product Description</label>
           <textarea
-            className="w-full max-w-[500px] px-3 py-2"
-            placeholder="Write content here"
+            className={`${inputClass} resize-none`}
+            rows={4}
+            placeholder='Describe the product...'
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:gap-8">
-          <div>
-            <p className="mb-2">Product category</p>
+        {/* Category / Sub-Category / Price */}
+        <div className='flex flex-col sm:flex-row gap-4'>
+          <div className='flex-1'>
+            <label className={labelClass}>Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2"
+              className={inputClass}
             >
-              <option value="Men">Men</option>
-              <option value="Women">Women</option>
-              <option value="Kids">Kids</option>
+              <option value='Men'>Men</option>
+              <option value='Women'>Women</option>
+              <option value='Kids'>Kids</option>
             </select>
           </div>
 
-          <div>
-            <p className="mb-2">Sub category</p>
+          <div className='flex-1'>
+            <label className={labelClass}>Sub Category</label>
             <select
               value={subCategory}
               onChange={(e) => setSubCategory(e.target.value)}
-              className="w-full px-3 py-2"
+              className={inputClass}
             >
-              <option value="Topwear">Topwear</option>
-              <option value="Bottomwear">Bottomwear</option>
-              <option value="Winterwear">Winterwear</option>
+              <option value='Topwear'>Topwear</option>
+              <option value='Bottomwear'>Bottomwear</option>
+              <option value='Winterwear'>Winterwear</option>
             </select>
           </div>
 
-          <div>
-            <p className="mb-2">Product Price</p>
+          <div className='w-full sm:w-32'>
+            <label className={labelClass}>Price (₹)</label>
             <input
-              className="w-full px-3 py-2 sm:w-[120px]"
-              type="number"
-              placeholder="25"
+              className={inputClass}
+              type='number'
+              placeholder='999'
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
           </div>
         </div>
 
+        {/* Sizes */}
         <div>
-          <p className="mb-2">Product Sizes</p>
-          <div className="flex gap-3">
+          <label className={labelClass}>Sizes</label>
+          <div className='flex gap-2'>
             {['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
-              <div key={size} onClick={() => toggleSize(size)}>
-                <p
-                  className={`px-3 py-1 cursor-pointer ${sizes.includes(size) ? 'bg-blue-300' : 'bg-slate-200'}`}
-                >
-                  {size}
-                </p>
+              <div
+                key={size}
+                onClick={() => toggleSize(size)}
+                className={`px-4 py-2 text-sm border cursor-pointer transition-colors duration-150 ${
+                  sizes.includes(size)
+                    ? 'bg-zinc-900 text-white border-zinc-900'
+                    : 'border-zinc-200 text-zinc-700 hover:border-zinc-900'
+                }`}
+              >
+                {size}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex gap-2 mt-2">
+        {/* Bestseller */}
+        <div className='flex items-center gap-2'>
           <input
-            type="checkbox"
-            id="bestseller"
+            type='checkbox'
+            id='bestseller'
             checked={bestseller}
-            onChange={(e) => setBestseller(e.target.checked)} 
+            onChange={(e) => setBestseller(e.target.checked)}
+            className='w-4 h-4 accent-zinc-900 cursor-pointer'
           />
-          <label className="cursor-pointer" htmlFor="bestseller">
-            Add to bestseller
+          <label className='text-sm text-zinc-600 cursor-pointer' htmlFor='bestseller'>
+            Mark as Bestseller
           </label>
         </div>
 
-        <button type="submit" className="w-28 py-3 mt-4 bg-black text-white">
-          ADD
-        </button>
+        {/* Submit */}
+        <div>
+          <button
+            type='submit'
+            className='px-8 py-2.5 bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-800 transition-colors duration-150 mt-6'
+          >
+            Add Product
+          </button>
+        </div>
+
       </form>
 
-      {/* Toastify Container */}
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+      <ToastContainer position='top-right' autoClose={3000} hideProgressBar />
     </div>
   );
 };

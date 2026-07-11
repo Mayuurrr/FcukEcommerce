@@ -3,26 +3,32 @@ import { NavLink } from 'react-router-dom'
 import { assets } from '../assets/assets'
 
 const Sidebar = () => {
+  const navItems = [
+    { to: '/add', icon: assets.add_icon, label: 'Add Items' },
+    { to: '/list', icon: assets.order_icon, label: 'List Items' },
+    { to: '/orders', icon: assets.order_icon, label: 'Orders' },
+  ]
+
   return (
-    <div className='w-[18%] min-h-screen border-r-2'>
-        <div className='flex flex-col gap-4 pt-6 pl-[20%] text-[15px]'>
-
-            <NavLink className='flex items-center gap-3 border border-gray-400 border-r-0 px-3 py-2 rounded-l' to="/add">
-            <img className='w-5 h-5' src={assets.add_icon} alt="" />
-            <p className='hidden md:block'>Add Items</p>
-            </NavLink>
-            
-            <NavLink className='flex items-center gap-3 border border-gray-400 border-r-0 px-3 py-2 rounded-l' to="/list">
-            <img className='w-5 h-5' src={assets.order_icon} alt="" />
-            <p className='hidden md:block'>List Items</p>
-            </NavLink>
-            
-            <NavLink className='flex items-center gap-3 border border-gray-400 border-r-0 px-3 py-2 rounded-l' to="/orders">
-            <img className='w-5 h-5' src={assets.order_icon} alt="" />
-            <p className='hidden md:block'>Order Items</p>
-            </NavLink>
-
-        </div>
+    <div className='w-52 min-h-screen bg-white border-r border-zinc-100 pt-8 flex-shrink-0'>
+      <nav className='flex flex-col gap-0.5'>
+        {navItems.map(({ to, icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 py-3 px-6 text-sm font-medium transition-colors duration-150 cursor-pointer ${
+                isActive
+                  ? 'text-zinc-900 bg-zinc-50 border-l-2 border-zinc-900'
+                  : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 border-l-2 border-transparent'
+              }`
+            }
+          >
+            <img className='w-4 h-4 opacity-60' src={icon} alt={label} />
+            <span className='hidden md:block'>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
     </div>
   )
 }

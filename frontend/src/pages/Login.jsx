@@ -2,24 +2,24 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const { token, setToken, navigate, backendURL } = useContext(ShopContext);
-  const [currentState, setCurrentState] = useState('Login');
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
-      if (currentState === 'Sign Up') {
-        const response = await axios.post(`${backendURL}/api/user/register`, { name, email, password })
+      if (mode === 'signup') {
+        const response = await axios.post(`${backendURL}/api/user/register`, { name, email, password });
         if (response.data.success) {
           setToken(response.data.token);
           localStorage.setItem('token', response.data.token);
-          toast.success('Registration successful!');
         } else {
           toast.error(response.data.message);
         }
@@ -28,7 +28,6 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token);
           localStorage.setItem('token', response.data.token);
-          toast.success('Login successful!');
         } else {
           toast.error(response.data.message);
         }
@@ -36,63 +35,88 @@ const Login = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(()=>{
-    if(token) {
-      navigate('/')
-    }
-  },[token])
+  useEffect(() => {
+    if (token) navigate('/');
+  }, [token]);
 
   return (
-    <form onSubmit={onSubmitHandler} className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800">
-      <div className="inline-flex items-center gap-2 mb-2 mt-10">
-        <p className="prata-regular text-3xl">{currentState}</p>
-        <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
-      </div>
-      {currentState === 'Login' ? null : (
-        <input
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-          type="text"
-          className="w-full px-3 py-2 border border-gray-800"
-          placeholder="Name"
-          required
-        />
-      )}
-      <input
-        onChange={(e) => setEmail(e.target.value)}
-        value={email}
-        type="email"
-        className="w-full px-3 py-2 border border-gray-800"
-        placeholder="Email"
-        required
-      />
-      <input
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-        type="password"
-        className="w-full px-3 py-2 border border-gray-800"
-        placeholder="Password"
-        required
-      />
-      <div className="w-full flex justify-between text-sm mt-[-8px]">
-        <p className="cursor-pointer">Forgot your password?</p>
-        {currentState === 'Login' ? (
-          <p onClick={() => setCurrentState('Sign Up')} className="cursor-pointer">
-            Create Account
+    <div className='min-h-[calc(100vh-64px)] flex items-center justify-center py-20 fade-up'>
+      <div className='w-full max-w-sm'>
+        {/* Header */}
+        <div className='mb-10'>
+          <p className='text-xs tracking-widest uppercase text-zinc-400 font-medium mb-2'>
+            {mode === 'login' ? 'Welcome back' : 'Join Aether'}
           </p>
-        ) : (
-          <p onClick={() => setCurrentState('Login')} className="cursor-pointer">
-            Login Here
-          </p>
-        )}
+          <h1 className='text-3xl font-light text-zinc-900 tracking-tight'>
+            {mode === 'login' ? 'Sign In' : 'Create Account'}
+          </h1>
+        </div>
+
+        <form onSubmit={onSubmitHandler} className='flex flex-col gap-4'>
+          {mode === 'signup' && (
+            <div>
+              <label className='text-[10px] tracking-widest uppercase text-zinc-400 font-medium block mb-1.5'>Name</label>
+              <input
+                type='text'
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder='Your full name'
+                required
+                className='w-full border border-zinc-200 px-3.5 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors placeholder-zinc-300'
+              />
+            </div>
+          )}
+          <div>
+            <label className='text-[10px] tracking-widest uppercase text-zinc-400 font-medium block mb-1.5'>Email</label>
+            <input
+              type='email'
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder='your@email.com'
+              required
+              className='w-full border border-zinc-200 px-3.5 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors placeholder-zinc-300'
+            />
+          </div>
+          <div>
+            <label className='text-[10px] tracking-widest uppercase text-zinc-400 font-medium block mb-1.5'>Password</label>
+            <input
+              type='password'
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder='Min. 8 characters'
+              required
+              className='w-full border border-zinc-200 px-3.5 py-3 text-sm focus:outline-none focus:border-zinc-900 transition-colors placeholder-zinc-300'
+            />
+          </div>
+
+          <div className='flex items-center justify-between text-xs mt-1'>
+            <button type='button' className='text-zinc-400 hover:text-zinc-900 transition-colors'>
+              Forgot password?
+            </button>
+            <button
+              type='button'
+              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+              className='text-zinc-900 font-medium hover:text-zinc-600 transition-colors'
+            >
+              {mode === 'login' ? 'Create account →' : 'Sign in instead →'}
+            </button>
+          </div>
+
+          <button
+            type='submit'
+            disabled={loading}
+            className='w-full py-3.5 bg-zinc-900 text-white text-xs tracking-widest uppercase font-medium hover:bg-zinc-800 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed'
+          >
+            {loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+          </button>
+        </form>
       </div>
-      <button className="bg-black text-white font-light px-8 py-2 mt-4">
-        {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
-      </button>
-    </form>
+    </div>
   );
 };
 

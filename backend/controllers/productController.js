@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import productModel from "../models/productModel.js"
 
-//Function to add product
+// Add product
 const addProduct = async (req, res) => {
     try {
         const { name, description, price, category, subCategory, sizes, bestSeller } = req.body;
@@ -22,7 +22,7 @@ const addProduct = async (req, res) => {
             category,
             price: Number(price),
             subCategory,
-            bestSeller: req.body.bestseller === 'true' ? true : false,
+            bestSeller: req.body.bestseller === 'true',
             sizes: JSON.parse(sizes),
             image: imagesUrl,
             date: Date.now()
@@ -34,49 +34,45 @@ const addProduct = async (req, res) => {
         res.json({ success: true, message: "Product added" });
     } catch (error) {
         console.error("Error adding product:", error);
-        res.json({ success: false, message: "Failed to add product. " + error.message });
+        res.status(500).json({ success: false, message: "Failed to add product: " + error.message });
     }
 };
 
-
-//Function to list product
+// List all products
 const listProducts = async (req, res) => {
     try {
-        
-        const products = await productModel.find({});
-        res.json({success:true,products})
-
+        const products = await productModel.find({}).lean();
+        res.json({ success: true, products })
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message })
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message })
     }
 }
 
-//Function to deleting product
+// Remove product
 const removeProduct = async (req, res) => {
     try {
         await productModel.findByIdAndDelete(req.body.id);
         res.json({ success: true, message: "Product deleted" });
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
-
-//Function to single product info
+// Single product info — FIXED: was passing entire req.body, now passes req.body.productId
 const singleProduct = async (req, res) => {
     try {
-        const product = await productModel.findById(req.body);
+        const { productId } = req.body;
+        const product = await productModel.findById(productId).lean();
         if (!product) {
-            return res.json({ success: false, message: "Product not found" });
+            return res.status(404).json({ success: false, message: "Product not found" });
         }
         res.json({ success: true, product });
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
 };
-
 
 export { addProduct, listProducts, removeProduct, singleProduct }

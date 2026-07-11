@@ -7,23 +7,22 @@ const BestSeller = () => {
   const { products } = useContext(ShopContext);
   const [bestSeller, setBestSeller] = useState([]);
 
-
   useEffect(() => {
     if (Array.isArray(products)) {
-      const bestProduct = products.filter((item) => item.bestSeller === true);
-      setBestSeller(bestProduct.slice(0, 5));
+      const bestProducts = products.filter((item) => item.bestSeller === true);
+      setBestSeller(bestProducts.slice(0, 5));
     }
   }, [products]);
 
   return (
-    <div className="my-10">
-      <div className="text-center text-3xl py-8">
-        <Title text1="Best" text2="Seller" />
-        <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium odio, fugiat dolor sunt asperiores soluta rerum fuga omnis tempore magni accusamus sit ut natus est cumque.
+    <section className='py-14 border-t border-zinc-100'>
+      <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10'>
+        <Title text1='Customer Favourites' text2='Best Sellers' />
+        <p className='text-sm text-zinc-400 font-light max-w-xs'>
+          Our most-loved pieces — consistently top-rated by our community.
         </p>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
+      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-8'>
         {bestSeller.map((item) => (
           <ProductItem
             key={item._id}
@@ -31,10 +30,11 @@ const BestSeller = () => {
             image={item.image}
             name={item.name}
             price={item.price}
+            category={item.category}
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 

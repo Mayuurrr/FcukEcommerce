@@ -9,7 +9,6 @@ const Orders = ({ token }) => {
 
   const fetchAllOrders = async () => {
     if (!token) return;
-
     try {
       const response = await axios.post(
         `${backendURL}/api/order/list`,
@@ -22,98 +21,116 @@ const Orders = ({ token }) => {
         toast.error(response.data.message || 'Failed to fetch orders');
       }
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || 'Something went wrong!';
+      const errorMessage = error.response?.data?.message || 'Something went wrong!';
       toast.error(errorMessage);
     }
   };
 
   const statusHandler = async (event, orderId) => {
     try {
-
-      const response = await axios.post(backendURL + '/api/order/status', { orderId, status: event.target.value }, { headers: { token } })
+      const response = await axios.post(
+        backendURL + '/api/order/status',
+        { orderId, status: event.target.value },
+        { headers: { token } }
+      );
       if (response.data.success) {
-        await fetchAllOrders()
+        await fetchAllOrders();
       } else {
-        toast.error(response.data.message || 'Failed to fetch orders');
+        toast.error(response.data.message || 'Failed to update status');
       }
-
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || 'Something went wrong!';
+      const errorMessage = error.response?.data?.message || 'Something went wrong!';
       toast.error(errorMessage);
     }
-  }
+  };
 
   useEffect(() => {
     fetchAllOrders();
   }, [token]);
 
   return (
-    <div className="container mx-auto p-6">
-      <h3 className="text-2xl font-semibold mb-6">Order Page</h3>
-      <div className="space-y-6">
-        {orders.length > 0 ? (
+    <div className='p-8 fade-up'>
+      {/* Page Title */}
+      <h1 className='text-xl font-light text-zinc-900 mb-8'>Orders</h1>
+
+      <div className='flex flex-col gap-3'>
+        {orders.length === 0 ? (
+          <p className='text-sm text-zinc-400 py-12 text-center border border-zinc-100'>
+            No orders found.
+          </p>
+        ) : (
           orders.map((order) => (
             <div
-              key={order.id}
-              className="bg-gray-100 shadow-md rounded-lg p-4 flex justify-between items-start space-x-4"
+              key={order._id}
+              className='border border-zinc-100 p-5 grid grid-cols-[auto_1fr_auto_auto] gap-6 items-start hover:bg-zinc-50 transition-colors duration-150'
             >
               {/* Parcel Icon */}
-              <div>
+              <div className='pt-0.5'>
                 <img
                   src={assets.parcel_icon}
-                  alt="Parcel Icon"
-                  className="w-12 h-12"
+                  alt='Parcel'
+                  className='w-8 h-8 opacity-60'
                 />
               </div>
 
-              {/* Order Details */}
-              <div className="flex-1">
-                <div className="text-sm text-gray-700 mb-2">
+              {/* Order Items + Address */}
+              <div>
+                <div className='mb-2'>
                   {order.items.map((item, index) => (
-                    <span key={index} className="block">
-                      {item.name} x {item.quantity} <span>({item.size})</span>
-                      {index !== order.items.length - 1 && ', '}
-                    </span>
+                    <p key={index} className='text-sm text-zinc-700 font-medium leading-relaxed'>
+                      {item.name} × {item.quantity}
+                      <span className='text-zinc-400 font-normal ml-1'>({item.size})</span>
+                      {index !== order.items.length - 1 && (
+                        <span className='text-zinc-300'>,</span>
+                      )}
+                    </p>
                   ))}
                 </div>
-                <p className="font-bold text-gray-800">{order.address.firstName + " " + order.address.lastName}</p>
-                <p className="text-gray-600">{order.address.street}</p>
-                <p className="text-gray-600">
-                  {order.address.city}, {order.address.state}, {order.address.country} - {order.address.zipcode}
+                <div className='text-xs text-zinc-400 space-y-0.5 mt-1'>
+                  <p className='font-medium text-zinc-500'>
+                    {order.address.firstName} {order.address.lastName}
+                  </p>
+                  <p>{order.address.street}</p>
+                  <p>
+                    {order.address.city}, {order.address.state},{' '}
+                    {order.address.country} — {order.address.zipcode}
+                  </p>
+                  <p>{order.address.phone}</p>
+                </div>
+              </div>
+
+              {/* Order Meta */}
+              <div className='text-xs text-zinc-500 space-y-0.5 min-w-[120px]'>
+                <p>Items: <span className='text-zinc-700'>{order.items.length}</span></p>
+                <p>Method: <span className='text-zinc-700'>{order.paymentMethod}</span></p>
+                <p>
+                  Payment:{' '}
+                  <span className={order.payment ? 'text-emerald-600' : 'text-amber-500'}>
+                    {order.payment ? 'Done' : 'Pending'}
+                  </span>
                 </p>
-                <p className="text-gray-600">{order.address.phone}</p>
+                <p>Date: <span className='text-zinc-700'>{new Date(order.date).toLocaleDateString()}</span></p>
+                <p className='text-base font-medium text-zinc-900 mt-2'>
+                  ₹{order.amount}
+                </p>
               </div>
 
-              {/* Order Summary */}
-              <div className="text-sm text-gray-700 space-y-1">
-                <p>Items: {order.items.length}</p>
-                <p>Method: {order.paymentMethod}</p>
-                <p>Payment: {order.payment ? 'Done' : 'Pending'}</p>
-                <p>Date: {new Date(order.date).toLocaleDateString()}</p>
-              </div>
-
-              {/* Order Amount */}
-              <div className="text-lg font-bold text-gray-800">
-                {currency}
-                {order.amount}
-              </div>
-
-              {/* Status Dropdown */}
+              {/* Status Select */}
               <div>
-                <select onChange={(event) => statusHandler(event,order._id)} value={order.status} className="border border-gray-300 rounded-lg p-2 text-sm">
-                  <option value="Order Placed">Order Placed</option>
-                  <option value="Packing">Packing</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Out for delivery">Out for delivery</option>
-                  <option value="Delivered">Delivered</option>
+                <select
+                  onChange={(event) => statusHandler(event, order._id)}
+                  value={order.status}
+                  className='border border-zinc-200 px-2 py-1.5 text-xs text-zinc-700 focus:outline-none focus:border-zinc-900 transition-colors duration-150 cursor-pointer'
+                >
+                  <option value='Order Placed'>Order Placed</option>
+                  <option value='Packing'>Packing</option>
+                  <option value='Shipped'>Shipped</option>
+                  <option value='Out for delivery'>Out for delivery</option>
+                  <option value='Delivered'>Delivered</option>
                 </select>
               </div>
             </div>
           ))
-        ) : (
-          <p className="text-gray-600">No orders found.</p>
         )}
       </div>
     </div>

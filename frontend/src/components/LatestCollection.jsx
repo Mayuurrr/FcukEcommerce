@@ -4,32 +4,35 @@ import Title from './Title';
 import ProductItem from './ProductItem';
 
 const LatestCollection = () => {
-
   const { products } = useContext(ShopContext);
-  const [latestProducts, setLatestProduct] = useState([]);
+  const [latestProducts, setLatestProducts] = useState([]);
 
   useEffect(() => {
-    setLatestProduct(products.slice(0, 10));
+    setLatestProducts(products.slice(0, 10));
   }, [products]);
 
-
   return (
-    <div className='my-10'>
-      <div className='text-center py-8 text-3xl'>
-        <Title text1={'LATEST'} text2={'COLLECTION'} />
-        <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium odio, fugiat dolor sunt asperiores soluta rerum fuga omnis tempore magni accusamus sit ut natus est cumque
+    <section className='py-14 border-t border-zinc-100'>
+      <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10'>
+        <Title text1='New In' text2='Latest Collection' />
+        <p className='text-sm text-zinc-400 font-light max-w-xs'>
+          Fresh arrivals curated for the modern wardrobe. Updated every season.
         </p>
       </div>
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
-        {
-          latestProducts.map((item, index) => (
-            <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
-          ))
-        }
+      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-8'>
+        {latestProducts.map((item) => (
+          <ProductItem
+            key={item._id}
+            id={item._id}
+            image={item.image}
+            name={item.name}
+            price={item.price}
+            category={item.category}
+          />
+        ))}
       </div>
-    </div>
-  )
-}
+    </section>
+  );
+};
 
-export default LatestCollection
+export default LatestCollection;
